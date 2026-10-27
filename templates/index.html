@@ -400,6 +400,52 @@
       font-size: 0.75rem;
       color: var(--muted);
     }
+
+    footer {
+      max-width: 760px;
+      margin: 4rem auto 0;
+      padding: 1.5rem 1.5rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .footer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .footer-title {
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .footer-group {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .footer-members {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+    }
+    .member-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #3f3f46;
+    }
+    .member-roll {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      background: var(--subtle-bg);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+    }
   </style>
 </head>
 <body>
@@ -465,6 +511,20 @@
 
     <div id="resultsContainer" class="results-section"></div>
   </main>
+
+  <footer>
+    <div class="footer-top">
+      <span class="footer-title">AI Group Project &mdash; WordWeaver</span>
+      <span class="footer-group">Group: Num 3.14</span>
+    </div>
+    <div class="footer-members">
+      <span class="member-item">Umesh Vishwakarma <span class="member-roll">B24CS507</span></span>
+      <span class="member-item">Mahesh <span class="member-roll">B24EC509</span></span>
+      <span class="member-item">Srivarshith <span class="member-roll">B24EC510</span></span>
+      <span class="member-item">Swarit Dixit <span class="member-roll">B24EC514</span></span>
+      <span class="member-item">S B Pranay <span class="member-roll">B24EE045</span></span>
+    </div>
+  </footer>
 
   <script>
     let currentAlgo = 'all';
