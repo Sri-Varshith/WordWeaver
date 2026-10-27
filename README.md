@@ -6,11 +6,15 @@ WordWeaver is a Python-based word ladder solver and search algorithm benchmark. 
 
 ## Features
 
-- **Breadth-First Search (BFS)**: Uninformed search that guarantees finding the optimal (shortest) word ladder path.
-- **Greedy Hill Climbing**: Heuristic-guided search utilizing Hamming distance. Prioritizes steepest descent toward the target; can encounter local minima / plateaus.
-- **Dictionary & Neighbor Generation**: Fast O(1) set-based dictionary lookups and 1-letter mutation discovery.
-- **Input Validation**: Ensures inputs are valid 4-letter alphabetic words present in the dictionary.
-- **Automated Unit Tests**: Comprehensive test suite covering core modules and search algorithms.
+- **Breadth-First Search (BFS)**: Uninformed search exploring level-by-level; guarantees finding the optimal (shortest) word ladder.
+- **A\* Search**: Informed heuristic search using $f(n) = g(n) + h(n)$ with admissible Hamming distance; guarantees optimal paths with fewer node expansions.
+- **Greedy Best-First Search (GBFS)**: Heuristic-driven search prioritizing nodes with the lowest Hamming distance $h(n)$ to the target.
+- **Greedy Hill Climbing**: Local search selecting strictly improving neighbors based on Hamming distance; fast but can get trapped in local minima.
+- **Depth-First Search (DFS)**: Uninformed search diving deep into graph branches; finds a valid path if one exists without optimality guarantees.
+- **Performance Benchmark**: Script measuring latency, peak memory, nodes expanded, and path length across all algorithms.
+- **Minimalist Web Interface**: Interactive single-page application for solving word ladders and comparing algorithms side by side.
+- **Dictionary & Neighbor Generation**: $O(1)$ set-based lookups and 1-letter mutation discovery.
+- **Input Validation**: Verifies that start and target words are valid 4-letter alphabetic dictionary entries.
 
 ---
 
@@ -20,8 +24,11 @@ WordWeaver is a Python-based word ladder solver and search algorithm benchmark. 
 wordweaver/
 ├── algorithms/
 │   ├── __init__.py
+│   ├── astar.py             # A* Search solver
 │   ├── bfs.py               # BFS shortest-path solver
-│   └── hill_climbing.py     # Greedy hill climbing with Hamming distance
+│   ├── dfs.py               # Depth-First Search solver
+│   ├── gbfs.py              # Greedy Best-First Search solver
+│   └── hill_climbing.py     # Greedy Hill Climbing solver
 ├── core/
 │   ├── __init__.py
 │   ├── dictionary.py        # Loads word list into a set
@@ -29,11 +36,13 @@ wordweaver/
 │   ├── neighbors.py         # 1-letter mutation generator
 │   └── validation.py        # Validates start/target words
 ├── data/
-│   ├── dictionary.txt -> words.txt
+│   ├── dictionary.txt
 │   └── words.txt            # 4-letter word dataset
-├── tests/
-│   ├── __init__.py
-│   └── test_member1.py      # Unit tests
+├── templates/
+│   └── index.html           # Web interface frontend
+├── app.py                   # Flask server and API endpoints
+├── benchmark.py             # Multi-algorithm performance benchmark
+├── requirements.txt         # Project dependencies
 ├── dictionary.txt
 ├── .gitignore
 └── README.md
@@ -46,34 +55,28 @@ wordweaver/
 ### Prerequisites
 
 - Python 3.8 or higher.
-- Install dependencies for the web interface:
+- Install dependencies:
   ```bash
   pip install -r requirements.txt
   ```
 
 ### Running the Web Interface
 
-Launch the interactive web UI:
+Launch the local web application:
 
 ```bash
 python3 app.py
 ```
+
 Then navigate to `http://localhost:5000` in your browser.
 
----
+### Running the Benchmark
 
-## Deploying to Render
+Execute the algorithm performance comparison suite:
 
-This repository is ready to deploy to **[Render](https://render.com)** as a free Python Web Service:
-
-1. Push your changes to GitHub.
-2. In the [Render Dashboard](https://dashboard.render.com), click **New +** &rarr; **Web Service**.
-3. Connect your GitHub repository (`WordWeaver`).
-4. Configure the service settings (or Render will automatically detect `render.yaml`):
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:app`
-5. Click **Create Web Service**. Your app will be live on a public `.onrender.com` URL within 1-2 minutes!
+```bash
+python3 benchmark.py
+```
 
 ---
 
@@ -83,6 +86,7 @@ This repository is ready to deploy to **[Render](https://render.com)** as a free
 from core.dictionary import load_dictionary
 from core.validation import validate_words
 from algorithms.bfs import bfs
+from algorithms.astar import astar
 from algorithms.hill_climbing import hill_climbing
 
 # 1. Load dictionary
@@ -95,7 +99,15 @@ is_valid, msg = validate_words(start, target, dictionary)
 if not is_valid:
     print(f"Validation error: {msg}")
 else:
-    # 3. Solve with BFS (Optimal)
+    # 3. Solve with A* (Optimal, heuristic-guided)
+    astar_res = astar(start, target, dictionary)
+    print("A* Result:")
+    print(f"  Path: {' -> '.join(astar_res['path'])}")
+    print(f"  Length: {astar_res['path_length']}")
+    print(f"  Nodes Expanded: {astar_res['nodes_expanded']}")
+    print(f"  Execution Time: {astar_res['execution_time']}s\n")
+
+    # 4. Solve with BFS (Optimal, uniform breadth)
     bfs_res = bfs(start, target, dictionary)
     print("BFS Result:")
     print(f"  Path: {' -> '.join(bfs_res['path'])}")
@@ -103,7 +115,7 @@ else:
     print(f"  Nodes Expanded: {bfs_res['nodes_expanded']}")
     print(f"  Execution Time: {bfs_res['execution_time']}s\n")
 
-    # 4. Solve with Hill Climbing (Heuristic)
+    # 5. Solve with Hill Climbing (Local search)
     hc_res = hill_climbing(start, target, dictionary)
     print("Hill Climbing Result:")
     print(f"  Found: {hc_res['found']}")
@@ -118,15 +130,8 @@ else:
 
 | Algorithm | Strategy | Complete? | Optimal? | Handles Local Minima? |
 | :--- | :--- | :--- | :--- | :--- |
-| **BFS** | Uniform breadth exploration | Yes | Yes (Shortest path) | Yes |
-| **Hill Climbing** | Greedy Hamming distance | No | No | No (Can get trapped) |
-
----
-
-## Running Tests
-
-Execute the unit test suite:
-
-```bash
-python3 -m unittest discover tests
-```
+| **BFS** | Level-by-level breadth exploration | Yes | Yes (Shortest path) | Yes |
+| **A\*** | Path cost + Hamming heuristic ($g + h$) | Yes | Yes (Shortest path) | Yes |
+| **GBFS** | Greedy lowest heuristic cost ($h$) | Yes | No | Yes (Backtracks out) |
+| **Hill Climbing** | Steepest descent on Hamming distance | No | No | No (Can get trapped) |
+| **DFS** | Exhaustive branch-first traversal | Yes | No | Yes |
