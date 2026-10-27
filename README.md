@@ -5,7 +5,7 @@
 ### Team Members
 - Umesh Vishwakarma — B24CS507
 - Mahesh — B24EC509
-- Srivarshith — B24EC510
+- Nimmagadda Sri Varshith — B24EC510
 - Swarit Dixit — B24EC514
 - S B Pranay — B24EE045
 
