@@ -1,10 +1,13 @@
 # AI Group Project - WordWeaver (word ladder)
-Group Name: Num 3.14
-Umesh Vishwakarma - B24CS507
-Mahesh - B24EC509
-Srivarshith - B24EC510
-Swarit Dixit - B24EC514
-S B Pranay - B24EE045
+
+**Group Name:** Num 3.14
+
+### Team Members
+- Umesh Vishwakarma — B24CS507
+- Mahesh — B24EC509
+- Srivarshith — B24EC510
+- Swarit Dixit — B24EC514
+- S B Pranay — B24EE045
 
 
 
