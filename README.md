@@ -45,16 +45,35 @@ wordweaver/
 
 ### Prerequisites
 
-- Python 3.8 or higher (no external dependencies required).
+- Python 3.8 or higher.
+- Install dependencies for the web interface:
+  ```bash
+  pip install -r requirements.txt
+  ```
 
-### Installation
+### Running the Web Interface
 
-Clone the repository and enter the directory:
+Launch the interactive web UI:
 
 ```bash
-git clone https://github.com/Sri-Varshith/WordWeaver.git
-cd WordWeaver
+python3 app.py
 ```
+Then navigate to `http://localhost:5000` in your browser.
+
+---
+
+## Deploying to Render
+
+This repository is ready to deploy to **[Render](https://render.com)** as a free Python Web Service:
+
+1. Push your changes to GitHub.
+2. In the [Render Dashboard](https://dashboard.render.com), click **New +** &rarr; **Web Service**.
+3. Connect your GitHub repository (`WordWeaver`).
+4. Configure the service settings (or Render will automatically detect `render.yaml`):
+   - **Environment**: `Python 3`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+5. Click **Create Web Service**. Your app will be live on a public `.onrender.com` URL within 1-2 minutes!
 
 ---
 

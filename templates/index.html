@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WordWeaver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #09090b;
+      --muted: #71717a;
+      --border: #e4e4e7;
+      --border-subtle: #f4f4f5;
+      --subtle-bg: #f4f4f5;
+      --subtle-hover: #ebebee;
+      --primary: #18181b;
+      --primary-hover: #27272a;
+      --error-bg: #fef2f2;
+      --error-border: #fecaca;
+      --error-fg: #991b1b;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 6rem;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--fg);
+      text-decoration: none;
+    }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 400;
+    }
+
+    .github-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .github-link:hover {
+      color: var(--fg);
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 0;
+    }
+
+    .hero-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+
+    .hero-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    .form-section {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+
+    @media (max-width: 600px) {
+      .inputs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-group label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .word-input {
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.65rem 1rem;
+      background: var(--subtle-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--fg);
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .word-input:hover {
+      background: #f0f0f2;
+    }
+
+    .word-input:focus {
+      background: #ffffff;
+      border-color: var(--fg);
+      box-shadow: 0 0 0 1px var(--fg);
+    }
+
+    .btn-swap {
+      height: 44px;
+      padding: 0 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      background: var(--subtle-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-swap:hover {
+      color: var(--fg);
+      background: var(--subtle-hover);
+    }
+
+    .btn-submit {
+      height: 44px;
+      padding: 0 1.5rem;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .presets-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+    }
+    .presets-label {
+      color: var(--muted);
+      margin-right: 0.25rem;
+    }
+    .preset-chip {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--subtle-bg);
+      border: 1px solid transparent;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      color: #3f3f46;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .preset-chip:hover {
+      background: var(--subtle-hover);
+      color: var(--fg);
+      border-color: var(--border);
+    }
+
+    .control-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .segmented-control {
+      display: inline-flex;
+      flex-wrap: wrap;
+      background: var(--subtle-bg);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      gap: 2px;
+    }
+    .segmented-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .segmented-btn:hover {
+      color: var(--fg);
+    }
+    .segmented-btn.active {
+      background: #ffffff;
+      color: var(--fg);
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    .error-banner {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      border-radius: 8px;
+      color: var(--error-fg);
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: none;
+    }
+
+    .results-section {
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .table-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    th {
+      background: var(--subtle-bg);
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      padding: 0.6rem 0.85rem;
+      text-align: left;
+    }
+    th.text-center { text-align: center; }
+    th.text-right { text-align: right; }
+    td {
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr.clickable-row {
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+    tr.clickable-row:hover {
+      background: var(--subtle-bg);
+    }
+    tr.clickable-row.selected {
+      background: #f4f4f5;
+      font-weight: 600;
+    }
+
+    .ladder-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .ladder-title {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .ladder-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-left: 0.5rem;
+    }
+    .btn-copy {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: none;
+      border: none;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .btn-copy:hover {
+      color: var(--fg);
+    }
+
+    .ladder-list {
+      max-width: 320px;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .ladder-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+    }
+    .ladder-num {
+      color: #a1a1aa;
+      font-size: 0.75rem;
+      width: 2rem;
+    }
+    .ladder-letters {
+      letter-spacing: 0.35em;
+      font-weight: 500;
+    }
+    .char-changed {
+      font-weight: 700;
+      color: var(--fg);
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    .char-same {
+      color: #52525b;
+    }
+    .ladder-tag {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-container">
+      <div class="brand">
+        <span>WordWeaver</span>
+        <span class="brand-sub">/ word ladder solver</span>
+      </div>
+      <a href="https://github.com/Sri-Varshith/WordWeaver" target="_blank" rel="noopener noreferrer" class="github-link">
+        github
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div>
+      <h1 class="hero-title">Word Ladder Graph Search</h1>
+      <p class="hero-desc">Transform one 4-letter word into another with single-letter mutations.</p>
+    </div>
+
+    <form id="solveForm" onsubmit="event.preventDefault(); executeSolve();" class="form-section">
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label>Start</label>
+          <input type="text" id="startWord" maxlength="4" value="COLD" class="word-input" oninput="this.value = this.value.toUpperCase();">
+        </div>
+
+        <button type="button" onclick="swapWords()" title="Swap words" class="btn-swap">&harr;</button>
+
+        <div class="input-group">
+          <label>Target</label>
+          <input type="text" id="targetWord" maxlength="4" value="WARM" class="word-input" oninput="this.value = this.value.toUpperCase();">
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Solve</button>
+      </div>
+
+      <div class="presets-row">
+        <span class="presets-label">Examples:</span>
+        <button type="button" onclick="setPair('COLD', 'WARM')" class="preset-chip">COLD &rarr; WARM</button>
+        <button type="button" onclick="setPair('LEAD', 'GOLD')" class="preset-chip">LEAD &rarr; GOLD</button>
+        <button type="button" onclick="setPair('HEAD', 'TAIL')" class="preset-chip">HEAD &rarr; TAIL</button>
+        <button type="button" onclick="setPair('BEST', 'GOOD')" class="preset-chip">BEST &rarr; GOOD</button>
+        <button type="button" onclick="setPair('RUBY', 'CODE')" class="preset-chip">RUBY &rarr; CODE</button>
+      </div>
+
+      <div>
+        <div class="control-label">Algorithm</div>
+        <div class="segmented-control" id="algoTabs">
+          <button type="button" onclick="selectAlgo('all')" data-algo="all" class="segmented-btn active">Compare All</button>
+          <button type="button" onclick="selectAlgo('astar')" data-algo="astar" class="segmented-btn">A*</button>
+          <button type="button" onclick="selectAlgo('bfs')" data-algo="bfs" class="segmented-btn">BFS</button>
+          <button type="button" onclick="selectAlgo('gbfs')" data-algo="gbfs" class="segmented-btn">GBFS</button>
+          <button type="button" onclick="selectAlgo('hill_climbing')" data-algo="hill_climbing" class="segmented-btn">Hill Climbing</button>
+          <button type="button" onclick="selectAlgo('dfs')" data-algo="dfs" class="segmented-btn">DFS</button>
+        </div>
+      </div>
+    </form>
+
+    <div id="errorBanner" class="error-banner"></div>
+
+    <div id="resultsContainer" class="results-section"></div>
+  </main>
+
+  <script>
+    let currentAlgo = 'all';
+    let lastData = null;
+    let selectedBenchmarkAlgo = 'astar';
+
+    function setPair(start, target) {
+      document.getElementById('startWord').value = start;
+      document.getElementById('targetWord').value = target;
+      executeSolve();
+    }
+
+    function swapWords() {
+      const s = document.getElementById('startWord').value;
+      const t = document.getElementById('targetWord').value;
+      document.getElementById('startWord').value = t;
+      document.getElementById('targetWord').value = s;
+    }
+
+    function selectAlgo(algo) {
+      currentAlgo = algo;
+      document.querySelectorAll('.segmented-btn').forEach(btn => {
+        if (btn.dataset.algo === algo) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      executeSolve();
+    }
+
+    function showError(msg) {
+      const b = document.getElementById('errorBanner');
+      b.textContent = msg;
+      b.style.display = 'block';
+    }
+
+    function hideError() {
+      const b = document.getElementById('errorBanner');
+      b.style.display = 'none';
+    }
+
+    async function executeSolve() {
+      hideError();
+      const start = document.getElementById('startWord').value.trim().toLowerCase();
+      const target = document.getElementById('targetWord').value.trim().toLowerCase();
+
+      if (start.length !== 4 || target.length !== 4) {
+        showError('Both words must be exactly 4 letters long.');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Searching...';
+
+      try {
+        const response = await fetch('/api/solve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ start, target, algorithm: currentAlgo })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          showError(data.error || 'Failed to find a ladder.');
+          document.getElementById('resultsContainer').innerHTML = '';
+          return;
+        }
+
+        lastData = data;
+        if (data.mode === 'all') {
+          if (!data.results[selectedBenchmarkAlgo]?.found) {
+            selectedBenchmarkAlgo = data.results.astar.found ? 'astar' : (data.results.bfs.found ? 'bfs' : Object.keys(data.results)[0]);
+          }
+          renderBenchmarkView(data);
+        } else {
+          renderSingleView(data);
+        }
+      } catch (err) {
+        showError('Failed to connect to the server.');
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Solve';
+      }
+    }
+
+    function renderSingleView(data) {
+      const res = data.result;
+      const c = document.getElementById('resultsContainer');
+
+      if (!res.found) {
+        c.innerHTML = `
+          <div style="padding: 2rem 0; text-align: center; color: var(--muted);">
+            <p style="font-weight: 500; color: var(--fg);">No path found with ${res.name}.</p>
+            <p style="font-size: 0.75rem; margin-top: 0.25rem;">${res.key === 'hill_climbing' ? 'Trapped in a local minimum.' : 'No path exists in the dictionary.'}</p>
+          </div>
+        `;
+        return;
+      }
+
+      c.innerHTML = `
+        <div>
+          <div class="ladder-header">
+            <div>
+              <span class="ladder-title">${res.name}</span>
+              <span class="ladder-meta">${res.path_length} steps &middot; ${res.nodes_expanded} nodes &middot; ${res.execution_time_ms} ms</span>
+            </div>
+            <button onclick="copyCurrentPath('${res.path.join(' -> ')}')" class="btn-copy">Copy Path</button>
+          </div>
+
+          <div class="ladder-list">
+            ${renderMinimalLadder(res.steps)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBenchmarkView(data) {
+      const { results } = data;
+      const c = document.getElementById('resultsContainer');
+
+      let tableRows = Object.values(results).map(r => {
+        const isSelected = r.key === selectedBenchmarkAlgo;
+        return `
+          <tr onclick="switchBenchmarkAlgo('${r.key}')" class="clickable-row ${isSelected ? 'selected' : ''}">
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${isSelected ? 'var(--fg)' : 'transparent'};"></span>
+                <span>${r.name}</span>
+                ${r.optimal ? '<span style="font-size: 0.7rem; color: var(--muted);">(optimal)</span>' : ''}
+              </div>
+            </td>
+            <td class="text-center">${r.found ? 'Yes' : '<span style="color: var(--muted);">No</span>'}</td>
+            <td class="text-center" style="font-family: var(--font-mono);">${r.found ? r.path_length : '&mdash;'}</td>
+            <td class="text-center" style="font-family: var(--font-mono); color: #52525b;">${r.nodes_expanded.toLocaleString()}</td>
+            <td class="text-right" style="font-family: var(--font-mono); font-weight: 500;">${r.execution_time_ms} ms</td>
+          </tr>
+        `;
+      }).join('');
+
+      const activeAlgo = results[selectedBenchmarkAlgo] || results.astar;
+
+      c.innerHTML = `
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em;">Comparison</div>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted);">click row to view path</div>
+          </div>
+
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th class="text-center">Found</th>
+                  <th class="text-center">Length</th>
+                  <th class="text-center">Nodes</th>
+                  <th class="text-right">Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRows}
+              </tbody>
+            </table>
+          </div>
+
+          <div style="padding-top: 1rem;">
+            <div class="ladder-header">
+              <div>
+                <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase;">Path For:</span>
+                <span class="ladder-title" style="margin-left: 0.35rem;">${activeAlgo.name}</span>
+                <span class="ladder-meta">(${activeAlgo.path_length} steps, ${activeAlgo.execution_time_ms} ms)</span>
+              </div>
+              <div>
+                ${activeAlgo.found ? `<button onclick="copyCurrentPath('${activeAlgo.path.join(' -> ')}')" class="btn-copy">Copy Path</button>` : ''}
+              </div>
+            </div>
+
+            <div class="ladder-list">
+              ${activeAlgo.found ? renderMinimalLadder(activeAlgo.steps) : '<p style="font-size: 0.75rem; color: var(--muted); padding: 1rem 0;">No path found for this algorithm.</p>'}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function switchBenchmarkAlgo(algoKey) {
+      selectedBenchmarkAlgo = algoKey;
+      if (lastData && lastData.mode === 'all') {
+        renderBenchmarkView(lastData);
+      }
+    }
+
+    function renderMinimalLadder(steps) {
+      if (!steps || steps.length === 0) return '';
+
+      return steps.map((step, idx) => {
+        const isStart = idx === 0;
+        const isTarget = idx === steps.length - 1;
+
+        const letterHTML = step.letters.map((char, cIdx) => {
+          const isChanged = step.changed_index === cIdx;
+          return `<span class="${isChanged ? 'char-changed' : 'char-same'}">${char}</span>`;
+        }).join(' ');
+
+        return `
+          <div class="ladder-row">
+            <div style="display: flex; align-items: center;">
+              <span class="ladder-num">${String(idx).padStart(2, '0')}</span>
+              <span class="ladder-letters">${letterHTML}</span>
+            </div>
+            <div class="ladder-tag">
+              ${isStart ? 'start' : (isTarget ? 'target' : (step.changed_index !== null ? `pos ${step.changed_index + 1}` : ''))}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function copyCurrentPath(pathStr) {
+      if (!pathStr) return;
+      navigator.clipboard.writeText(pathStr);
+      alert('Copied path to clipboard: ' + pathStr);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      executeSolve();
+    });
+  </script>
+</body>
+</html>
